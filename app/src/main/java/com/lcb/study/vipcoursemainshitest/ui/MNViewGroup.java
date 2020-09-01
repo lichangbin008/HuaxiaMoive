@@ -1,6 +1,7 @@
 package com.lcb.study.vipcoursemainshitest.ui;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -123,5 +124,15 @@ public class MNViewGroup extends ViewGroup {
             // 下一个控件绘制的高度就应该是加上上一个控件的高度以及上一个控件它涉及的margin高度；
             countTop += ((bottom - top) + lp.topMargin + lp.bottomMargin);
         }
+    }
+
+    @Override
+    public LayoutParams generateLayoutParams(AttributeSet attrs) {
+        return new MarginLayoutParams(getContext(),attrs);
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
     }
 }
