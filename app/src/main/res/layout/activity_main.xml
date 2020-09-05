@@ -14,4 +14,10 @@
         android:layout_height="wrap_content"
         android:text="UI面试"/>
 
+    <Button
+        android:id="@+id/bt_hashmap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Map面试"/>
+
 </LinearLayout>
