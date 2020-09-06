@@ -124,6 +124,8 @@ public class MyHashMap<K, V> implements Map<K, V> {
 
     @Override
     public V get(K key) {
+        //        遍历
+        getNode(table[hash(key.hashCode()) & (threshold - 1)], key);
         return null;
     }
 
