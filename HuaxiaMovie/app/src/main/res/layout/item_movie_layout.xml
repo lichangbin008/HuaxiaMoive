@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="260dp" android:layout_height="350dp"
+    android:focusable="true"
+    android:background="#00FF00"
+    android:layout_gravity="center">
+
+    <FrameLayout
+        android:id="@+id/ll_movie"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="10dp"
+        android:layout_width="210dp"
+        android:layout_height="330dp"
+        android:background="#FF0000">
+
+        <ImageView
+            android:layout_width="210dp"
+            android:layout_height="294dp"
+            android:src="@mipmap/movie"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textColor="@color/white"
+            android:layout_marginTop="295dp"
+            android:textSize="22sp"
+            android:background="#0000FF"
+            android:text="测试影片名一二三四"/>
+    </FrameLayout>
+
+</FrameLayout>
