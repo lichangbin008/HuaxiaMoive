@@ -26,7 +26,7 @@
             android:layout_marginTop="295dp"
             android:textSize="22sp"
             android:background="#0000FF"
-            android:text="测试影片名一二三四"/>
+            android:text="测试影片名"/>
     </FrameLayout>
 
 </FrameLayout>
