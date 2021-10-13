@@ -2,12 +2,16 @@ package com.suma.midware.huaxia.movie;
 
 
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.View;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.suma.midware.huaxia.movie.adapter.BaseRecyclerViewAdapter;
 import com.suma.midware.huaxia.movie.adapter.MovieAdapter;
+import com.suma.midware.huaxia.movie.listener.OnItemListener;
 import com.suma.midware.huaxia.movie.mvp.view.LifeCircleMvpActivity;
 
 import java.util.List;
@@ -45,6 +49,7 @@ public class MovieActivity extends LifeCircleMvpActivity implements IMovieFilesC
 
         initView();
         initData();
+        initListener();
 
         mPresenter.loadLocalFile();
     }
@@ -62,10 +67,34 @@ public class MovieActivity extends LifeCircleMvpActivity implements IMovieFilesC
         mMovieList.setAdapter(mAdapter);
     }
 
+    private void initListener(){
+        mAdapter.setOnItemListener(new OnItemListener() {
+            @Override
+            public void onItemClick(BaseRecyclerViewAdapter.ViewHolder holder, int position) {
+
+            }
+
+            @Override
+            public void onFocusChannged(BaseRecyclerViewAdapter.ViewHolder holder, boolean hasFocus) {
+                if (hasFocus){
+                    holder.dealFocusGain(holder.itemView);
+                }else {
+                    holder.dealFocusLost(holder.itemView);
+                }
+            }
+
+            @Override
+            public boolean onItemKey(View view, int keyCode, KeyEvent keyEvent, int position) {
+                return false;
+            }
+        });
+    }
+
 
     @Override
     public void updataMovieList(List<MovieInfo> list) {
         mAdapter.clearData();
         mAdapter.addDatum(list);
+        mMovieList.setSelection(0);
     }
 }

@@ -1,8 +1,13 @@
 package com.suma.midware.huaxia.movie.adapter;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,6 +38,43 @@ public class MovieAdapter extends BaseRecyclerViewAdapter<MovieInfo, BaseRecycle
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
+
+        //处理item点击监听器
+        if (onItemListener != null) {
+            //给itemView设置点击事件
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                /**
+                 * 点击回调事件
+                 *
+                 * @param v
+                 */
+                @Override
+                public void onClick(View v) {
+                    //回调监听接口
+                    onItemListener.onItemClick(holder, position);
+                }
+            });
+
+            holder.itemView
+                    .setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+                        @Override
+                        public void onFocusChange(View v, boolean hasFocus) {
+                            onItemListener.onFocusChannged(holder, hasFocus);
+                        }
+                    });
+
+            holder.itemView.setOnKeyListener(new View.OnKeyListener() {
+
+                @Override
+                public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
+                    return onItemListener.onItemKey(view, keyCode, keyEvent,
+                            holder.getPosition());
+                }
+            });
+        }
+        MovieInfo data = getData(position);
+        holder.bindData(data);
     }
 
     /**
@@ -40,6 +82,25 @@ public class MovieAdapter extends BaseRecyclerViewAdapter<MovieInfo, BaseRecycle
      */
     public class MovieViewHolder extends BaseRecyclerViewAdapter.ViewHolder<MovieInfo> {
 
+        /**
+         * 焦点
+         */
+        private ImageView mFocus;
+
+        /**
+         * 海报图片
+         */
+        private ImageView mPosterImg;
+
+        /**
+         * 影片名称
+         */
+        private TextView mMovieName;
+
+        /**
+         * 子视图
+         */
+        private View mItemView;
 
         /**
          * 构造方法
@@ -48,6 +109,10 @@ public class MovieAdapter extends BaseRecyclerViewAdapter<MovieInfo, BaseRecycle
          */
         public MovieViewHolder(@NonNull View itemView) {
             super(itemView);
+            mFocus = itemView.findViewById(R.id.iv_focus);
+            mPosterImg = itemView.findViewById(R.id.iv_poster);
+            mMovieName = itemView.findViewById(R.id.tv_name);
+            mItemView = itemView.findViewById(R.id.ll_movie);
         }
 
         @Override
@@ -57,12 +122,31 @@ public class MovieAdapter extends BaseRecyclerViewAdapter<MovieInfo, BaseRecycle
 
         @Override
         public void dealFocusGain(View view) {
-            super.dealFocusGain(view);
+            mFocus.setVisibility(View.VISIBLE);
+//            ObjectAnimator scaleXAnim = new ObjectAnimator();
+//            scaleXAnim = ObjectAnimator.ofFloat(mItemView, "scaleX", 1.0f, 1.08f);
+//
+//            ObjectAnimator scaleYAnim = new ObjectAnimator();
+//            scaleYAnim = ObjectAnimator.ofFloat(mItemView, "scaleY", 1.0f, 1.08f);
+//            AnimatorSet set = new AnimatorSet();
+//            set.play(scaleXAnim).with(scaleYAnim);
+//            set.setDuration(200);
+//            set.start();
         }
 
         @Override
         public void dealFocusLost(View view) {
-            super.dealFocusLost(view);
+            mFocus.setVisibility(View.GONE);
+//            ObjectAnimator scaleXAnim = new ObjectAnimator();
+//            scaleXAnim = ObjectAnimator.ofFloat(mItemView, "scaleX", 1.08f, 1.0f);
+//
+//            ObjectAnimator scaleYAnim = new ObjectAnimator();
+//            scaleYAnim = ObjectAnimator.ofFloat(mItemView, "scaleY", 1.08f, 1.0f);
+//
+//            AnimatorSet set = new AnimatorSet();
+//            set.play(scaleXAnim).with(scaleYAnim);
+//            set.setDuration(200);
+//            set.start();
         }
     }
 }
