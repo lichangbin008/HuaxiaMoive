@@ -3,6 +3,7 @@ package com.suma.midware.huaxia.movie.adapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +14,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.suma.midware.huaxia.movie.AutoScrollTextView;
+import com.suma.midware.huaxia.movie.ImageUtil;
 import com.suma.midware.huaxia.movie.MovieInfo;
 import com.suma.midware.huaxia.movie.R;
 
 public class MovieAdapter extends BaseRecyclerViewAdapter<MovieInfo, BaseRecyclerViewAdapter.ViewHolder> {
 
     private static final String TAG = "MovieAdapter";
+
 
     /**
      * 构造方法
@@ -124,7 +127,9 @@ public class MovieAdapter extends BaseRecyclerViewAdapter<MovieInfo, BaseRecycle
         @Override
         public void bindData(MovieInfo data) {
             super.bindData(data);
-            mMovieName.setText(data.getmDisplayName());
+            mMovieName.setText(data.getDisplayName());
+            mMovieName.setGravity(Gravity.CENTER_HORIZONTAL);
+            ImageUtil.show(context, mPosterImg, data.getPosterName());
         }
 
         @Override
@@ -160,4 +165,6 @@ public class MovieAdapter extends BaseRecyclerViewAdapter<MovieInfo, BaseRecycle
             set.start();
         }
     }
+
+
 }

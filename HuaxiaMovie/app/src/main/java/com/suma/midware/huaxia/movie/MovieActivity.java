@@ -1,6 +1,9 @@
 package com.suma.midware.huaxia.movie;
 
 
+import android.content.ComponentName;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -62,23 +65,24 @@ public class MovieActivity extends LifeCircleMvpActivity implements IMovieFilesC
         mMovieList.setLayoutManager(mLayoutManager);
     }
 
-    private void initData(){
+    private void initData() {
         mAdapter = new MovieAdapter(MovieActivity.this);
         mMovieList.setAdapter(mAdapter);
     }
 
-    private void initListener(){
+    private void initListener() {
         mAdapter.setOnItemListener(new OnItemListener() {
             @Override
             public void onItemClick(BaseRecyclerViewAdapter.ViewHolder holder, int position) {
-
+                mPresenter.getFileUri(position);
+                mPresenter.getFileType(position);
             }
 
             @Override
             public void onFocusChannged(BaseRecyclerViewAdapter.ViewHolder holder, boolean hasFocus) {
-                if (hasFocus){
+                if (hasFocus) {
                     holder.dealFocusGain(holder.itemView);
-                }else {
+                } else {
                     holder.dealFocusLost(holder.itemView);
                 }
             }
@@ -96,5 +100,30 @@ public class MovieActivity extends LifeCircleMvpActivity implements IMovieFilesC
         mAdapter.clearData();
         mAdapter.addDatum(list);
         mMovieList.setSelection(0);
+    }
+
+    @Override
+    public void startPlay(Uri uri, String type) {
+        ComponentName toActivity = new ComponentName(
+                "com.suma.midware.player.demo",
+                "com.suma.midware.player.demo.MainActivity");
+        Intent intentVlc = new Intent();
+        intentVlc.setComponent(toActivity);
+        intentVlc.setDataAndType(uri, type);
+        intentVlc.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intentVlc);
+    }
+
+    private void start() {
+
+//        //修改处理
+//        ComponentName toActivity = new ComponentName(
+//                "com.suma.midware.player.demo",
+//                "com.suma.midware.player.demo.MainActivity");
+//        Intent intentVlc = new Intent();
+//        intentVlc.setComponent(toActivity);
+//        intentVlc.setDataAndType(uri, type);
+//        intentVlc.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        startActivity(intentVlc);
     }
 }
