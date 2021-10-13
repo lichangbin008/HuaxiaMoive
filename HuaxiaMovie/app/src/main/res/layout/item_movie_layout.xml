@@ -2,7 +2,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="260dp" android:layout_height="350dp"
     android:focusable="true"
-    android:layout_gravity="center">
+    android:layout_gravity="center"
+    android:descendantFocusability="blocksDescendants">
 
     <FrameLayout
         android:id="@+id/ll_movie"
@@ -26,12 +27,13 @@
             android:layout_marginTop="6dp"
             android:src="@mipmap/movie"/>
 
-        <TextView
+        <com.suma.midware.huaxia.movie.AutoScrollTextView
             android:id="@+id/tv_name"
             android:layout_width="205dp"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:textColor="@color/white"
+            android:layout_marginLeft="6dp"
             android:layout_marginTop="300dp"
             android:textSize="22sp"
             android:text="测试影片名+123456789"

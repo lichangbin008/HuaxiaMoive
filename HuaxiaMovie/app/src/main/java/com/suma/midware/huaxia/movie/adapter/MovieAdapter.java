@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.suma.midware.huaxia.movie.AutoScrollTextView;
 import com.suma.midware.huaxia.movie.MovieInfo;
 import com.suma.midware.huaxia.movie.R;
 
@@ -95,12 +96,17 @@ public class MovieAdapter extends BaseRecyclerViewAdapter<MovieInfo, BaseRecycle
         /**
          * 影片名称
          */
-        private TextView mMovieName;
+        private AutoScrollTextView mMovieName;
 
         /**
          * 子视图
          */
         private View mItemView;
+
+        /**
+         * 海报名称
+         */
+//        private String mPosterName;
 
         /**
          * 构造方法
@@ -118,35 +124,40 @@ public class MovieAdapter extends BaseRecyclerViewAdapter<MovieInfo, BaseRecycle
         @Override
         public void bindData(MovieInfo data) {
             super.bindData(data);
+            mMovieName.setText(data.getmDisplayName());
         }
 
         @Override
         public void dealFocusGain(View view) {
             mFocus.setVisibility(View.VISIBLE);
-//            ObjectAnimator scaleXAnim = new ObjectAnimator();
-//            scaleXAnim = ObjectAnimator.ofFloat(mItemView, "scaleX", 1.0f, 1.08f);
-//
-//            ObjectAnimator scaleYAnim = new ObjectAnimator();
-//            scaleYAnim = ObjectAnimator.ofFloat(mItemView, "scaleY", 1.0f, 1.08f);
-//            AnimatorSet set = new AnimatorSet();
-//            set.play(scaleXAnim).with(scaleYAnim);
-//            set.setDuration(200);
-//            set.start();
+            mMovieName.reset(-1);
+            mMovieName.startScroll();
+            ObjectAnimator scaleXAnim = new ObjectAnimator();
+            scaleXAnim = ObjectAnimator.ofFloat(view, "scaleX", 1.0f, 1.08f);
+
+            ObjectAnimator scaleYAnim = new ObjectAnimator();
+            scaleYAnim = ObjectAnimator.ofFloat(view, "scaleY", 1.0f, 1.08f);
+            AnimatorSet set = new AnimatorSet();
+            set.play(scaleXAnim).with(scaleYAnim);
+            set.setDuration(200);
+            set.start();
         }
 
         @Override
         public void dealFocusLost(View view) {
             mFocus.setVisibility(View.GONE);
-//            ObjectAnimator scaleXAnim = new ObjectAnimator();
-//            scaleXAnim = ObjectAnimator.ofFloat(mItemView, "scaleX", 1.08f, 1.0f);
-//
-//            ObjectAnimator scaleYAnim = new ObjectAnimator();
-//            scaleYAnim = ObjectAnimator.ofFloat(mItemView, "scaleY", 1.08f, 1.0f);
-//
-//            AnimatorSet set = new AnimatorSet();
-//            set.play(scaleXAnim).with(scaleYAnim);
-//            set.setDuration(200);
-//            set.start();
+            mMovieName.stopScroll();
+            mMovieName.reset(-1);
+            ObjectAnimator scaleXAnim = new ObjectAnimator();
+            scaleXAnim = ObjectAnimator.ofFloat(view, "scaleX", 1.08f, 1.0f);
+
+            ObjectAnimator scaleYAnim = new ObjectAnimator();
+            scaleYAnim = ObjectAnimator.ofFloat(view, "scaleY", 1.08f, 1.0f);
+
+            AnimatorSet set = new AnimatorSet();
+            set.play(scaleXAnim).with(scaleYAnim);
+            set.setDuration(200);
+            set.start();
         }
     }
 }

@@ -31,7 +31,7 @@ public class MoviePresenter extends BaseMvpPresenter<IMovieFilesContract.IView>
         for (int i = 0;i < 10;i++){
             MovieInfo movieInfo = new MovieInfo();
             String index = String.valueOf(i+1);
-            movieInfo.setmDisplayName("边境迷雾" + index);
+            movieInfo.setmDisplayName(index+"-边境迷雾电影名称测试滚动");
             mMovieList.add(movieInfo);
         }
 
