@@ -11,6 +11,7 @@ import com.suma.midware.huaxia.movie.mvp.base.BaseMvpPresenter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,8 +50,15 @@ public class MoviePresenter extends BaseMvpPresenter<IMovieFilesContract.IView>
         super(view);
 
         mMovieList = new ArrayList<>();
-
-        mRootPath = "/mnt/sda/sda1/ftp2";
+//        mRootPath="/mnt/sda/sda1/ftp2";
+        mRootPath = getSystemPropertie("sys.local.path");
+        if (TextUtils.isEmpty(mRootPath)) {
+            mFileType = "/mnt/sda/sda1/ftp";
+        }
+        if (mRootPath.substring(mRootPath.length() - 1).equals("/")) {
+            mRootPath = mRootPath.substring(0, mRootPath.length() - 1);
+        }
+//        Log.d(TAG, "-->>mRootPath=" + mRootPath);
     }
 
     @Override
@@ -127,13 +135,18 @@ public class MoviePresenter extends BaseMvpPresenter<IMovieFilesContract.IView>
         File movieFile = new File(fileName);
         File[] files = movieFile.listFiles();
         for (int i = 0; i < files.length; i++) {
-            if ("movie.json".equals(files[i].getName())) {
-                //找到了json文件
-
-                String json = readString(fileName, files[i].getName());
-                return json;
+            if (files[i].isFile()){
+                String extension = getExtensionName(files[i].getName());
+                Log.d(TAG, "-->>extension="+extension);
+                if (files[i].isFile() && "json".equals(extension)) {
+                    //找到了json文件
+                    Log.d(TAG, "-->>name="+files[i].getName());
+                    String json = readString(fileName, files[i].getName());
+                    return json;
 //                Log.i(TAG, "-->>json=" + json);
+                }
             }
+
         }
         return null;
     }
@@ -236,6 +249,40 @@ public class MoviePresenter extends BaseMvpPresenter<IMovieFilesContract.IView>
             mimeType = MIME_MAP.get(extension.toUpperCase());
         }
         return mimeType;
+    }
+
+    private String getSystemPropertie(String key) {
+        String value = "";
+        try {
+            Method method = Class.forName("android.os.SystemProperties").getMethod("get", String.class, String.class);
+            value = ((String) method.invoke(null, key, "")).toString();
+            // 对部分非法数据进行处理
+            if (value == null || value.equalsIgnoreCase("unknown")) {
+                value = "";
+            } else {
+                value = value.trim();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return value;
+    }
+
+    /**
+     * 获取扩展名
+     *
+     * @param fileName
+     * @return
+     */
+    private String getExtensionName(String fileName) {
+//        Log.d(TAG, "-->>getExtensionName name="+fileName);
+        if (!TextUtils.isEmpty(fileName)) {
+            int dot = fileName.lastIndexOf('.');
+            if ((dot > -1) && (dot < (fileName.length() - 1))) {
+                return fileName.substring(dot + 1);
+            }
+        }
+        return fileName;
     }
 }
 
