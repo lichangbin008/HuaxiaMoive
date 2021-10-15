@@ -1,4 +1,4 @@
-package com.suma.midware.huaxia.movie;
+package com.suma.midware.huaxia.movie.util;
 
 import android.text.TextUtils;
 import android.util.Log;

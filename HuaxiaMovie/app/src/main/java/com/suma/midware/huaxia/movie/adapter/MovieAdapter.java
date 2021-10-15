@@ -8,13 +8,11 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.suma.midware.huaxia.movie.AutoScrollTextView;
-import com.suma.midware.huaxia.movie.ImageUtil;
+import com.suma.midware.huaxia.movie.util.ImageUtil;
 import com.suma.midware.huaxia.movie.MovieInfo;
 import com.suma.midware.huaxia.movie.R;
 
@@ -99,7 +97,7 @@ public class MovieAdapter extends BaseRecyclerViewAdapter<MovieInfo, BaseRecycle
         /**
          * 影片名称
          */
-        private AutoScrollTextView mMovieName;
+//        private AutoScrollTextView mMovieName;
 
         /**
          * 子视图
@@ -120,23 +118,23 @@ public class MovieAdapter extends BaseRecyclerViewAdapter<MovieInfo, BaseRecycle
             super(itemView);
             mFocus = itemView.findViewById(R.id.iv_focus);
             mPosterImg = itemView.findViewById(R.id.iv_poster);
-            mMovieName = itemView.findViewById(R.id.tv_name);
+//            mMovieName = itemView.findViewById(R.id.tv_name);
             mItemView = itemView.findViewById(R.id.ll_movie);
         }
 
         @Override
         public void bindData(MovieInfo data) {
             super.bindData(data);
-            mMovieName.setText(data.getDisplayName());
-            mMovieName.setGravity(Gravity.CENTER_HORIZONTAL);
+//            mMovieName.setText(data.getDisplayName());
+//            mMovieName.setGravity(Gravity.CENTER_HORIZONTAL);
             ImageUtil.show(context, mPosterImg, data.getPosterName());
         }
 
         @Override
         public void dealFocusGain(View view) {
             mFocus.setVisibility(View.VISIBLE);
-            mMovieName.reset(-1);
-            mMovieName.startScroll();
+//            mMovieName.reset(-1);
+//            mMovieName.startScroll();
             ObjectAnimator scaleXAnim = new ObjectAnimator();
             scaleXAnim = ObjectAnimator.ofFloat(view, "scaleX", 1.0f, 1.08f);
 
@@ -151,8 +149,8 @@ public class MovieAdapter extends BaseRecyclerViewAdapter<MovieInfo, BaseRecycle
         @Override
         public void dealFocusLost(View view) {
             mFocus.setVisibility(View.GONE);
-            mMovieName.stopScroll();
-            mMovieName.reset(-1);
+//            mMovieName.stopScroll();
+//            mMovieName.reset(-1);
             ObjectAnimator scaleXAnim = new ObjectAnimator();
             scaleXAnim = ObjectAnimator.ofFloat(view, "scaleX", 1.08f, 1.0f);
 

@@ -8,41 +8,41 @@
     <FrameLayout
         android:id="@+id/ll_movie"
         android:layout_marginLeft="19dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="10dp"
         android:layout_width="222dp"
         android:layout_height="334dp">
 
         <ImageView
             android:id="@+id/iv_focus"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="310dp"
             android:background="@mipmap/config_list_5_focus"
             android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/iv_poster"
             android:layout_width="210dp"
-            android:layout_height="294dp"
+            android:layout_height="298dp"
             android:layout_marginLeft="6dp"
             android:layout_marginTop="6dp"
             android:src="@mipmap/movie"/>
 
-        <com.suma.midware.huaxia.movie.AutoScrollTextView
-            android:id="@+id/tv_name"
-            android:layout_width="205dp"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:textColor="@color/white"
-            android:layout_marginLeft="6dp"
-            android:layout_marginTop="304dp"
-            android:textSize="22sp"
-            android:text="测试影片名+123456789"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:singleLine="true"
-            android:scrollHorizontally="true"
-            android:ellipsize="marquee"
-            android:focusable="true"
-            android:focusableInTouchMode="true"/>
+<!--        <com.suma.midware.huaxia.movie.AutoScrollTextView-->
+<!--            android:id="@+id/tv_name"-->
+<!--            android:layout_width="205dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:gravity="center_horizontal"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:layout_marginLeft="6dp"-->
+<!--            android:layout_marginTop="304dp"-->
+<!--            android:textSize="22sp"-->
+<!--            android:text="测试影片名+123456789"-->
+<!--            android:marqueeRepeatLimit="marquee_forever"-->
+<!--            android:singleLine="true"-->
+<!--            android:scrollHorizontally="true"-->
+<!--            android:ellipsize="marquee"-->
+<!--            android:focusable="true"-->
+<!--            android:focusableInTouchMode="true"/>-->
 
 
     </FrameLayout>

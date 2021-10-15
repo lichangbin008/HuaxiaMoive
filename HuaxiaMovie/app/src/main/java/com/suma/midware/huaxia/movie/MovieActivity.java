@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -94,7 +95,6 @@ public class MovieActivity extends LifeCircleMvpActivity implements IMovieFilesC
         });
     }
 
-
     @Override
     public void updataMovieList(List<MovieInfo> list) {
         mAdapter.clearData();
@@ -114,16 +114,8 @@ public class MovieActivity extends LifeCircleMvpActivity implements IMovieFilesC
         startActivity(intentVlc);
     }
 
-    private void start() {
-
-//        //修改处理
-//        ComponentName toActivity = new ComponentName(
-//                "com.suma.midware.player.demo",
-//                "com.suma.midware.player.demo.MainActivity");
-//        Intent intentVlc = new Intent();
-//        intentVlc.setComponent(toActivity);
-//        intentVlc.setDataAndType(uri, type);
-//        intentVlc.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        startActivity(intentVlc);
+    @Override
+    public void showNoList() {
+        Toast.makeText(MovieActivity.this,"没有加载到影片！",Toast.LENGTH_SHORT).show();
     }
 }

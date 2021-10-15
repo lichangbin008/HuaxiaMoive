@@ -10,6 +10,9 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+
+import com.suma.midware.huaxia.movie.util.SystemPropertyUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,36 +26,41 @@ public class MainActivity extends AppCompatActivity {
 
     private Handler mHandler = new Handler();
 
+    private boolean mIsFirst = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         mLayoutPlay = findViewById(R.id.ff_play);
-        mLayoutSet=findViewById(R.id.ff_set);
+        mLayoutSet = findViewById(R.id.ff_set);
 
-        mPlayFocus=findViewById(R.id.iv_play_focus);
-        mSetFocus=findViewById(R.id.iv_set_focus);
+        mPlayFocus = findViewById(R.id.iv_play_focus);
+        mSetFocus = findViewById(R.id.iv_set_focus);
 
 //        mLayoutPlay=findViewById(R.id.ll_play);
 //        mLayoutSet=findViewById(R.id.ll_set);
 
 
-
         initListener();
 
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mLayoutPlay.requestFocus();
-            }
-        },50);
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
+        if (mIsFirst) {
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mLayoutPlay.requestFocus();
+                    mLayoutPlay.requestFocusFromTouch();
+                }
+            }, 500);
+            mIsFirst = false;
+        }
     }
 
     private void initListener() {
@@ -77,14 +85,19 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        
+
         mLayoutPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+//                if ("0".equals(SystemPropertyUtil.getSystemPropertie("sys.mounted"))) {
+//                    startPlay();
+//                } else {
+//                    Toast.makeText(MainActivity.this, "移动设备未挂载", Toast.LENGTH_SHORT).show();
+//                }
                 startPlay();
             }
         });
-        
+
         mLayoutSet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -97,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
      * 启动播放
      */
     private void startPlay() {
-        Intent intent = new Intent(MainActivity.this,MovieActivity.class);
+        Intent intent = new Intent(MainActivity.this, MovieActivity.class);
         startActivity(intent);
     }
 

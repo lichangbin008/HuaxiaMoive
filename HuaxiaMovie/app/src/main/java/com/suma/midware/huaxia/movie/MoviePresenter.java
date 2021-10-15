@@ -7,6 +7,10 @@ import android.webkit.MimeTypeMap;
 
 import com.google.gson.Gson;
 import com.suma.midware.huaxia.movie.mvp.base.BaseMvpPresenter;
+import com.suma.midware.huaxia.movie.util.ClassUtil;
+import com.suma.midware.huaxia.movie.util.SystemPropertyUtil;
+
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,8 +46,15 @@ public class MoviePresenter extends BaseMvpPresenter<IMovieFilesContract.IView>
      */
     private String mFileType;
 
-    /* 扩展名和mime类型扩展支持集合 */
+    /**
+     * 扩展名和mime类型扩展支持集合
+     */
     private final Map<String, String> MIME_MAP = new HashMap<String, String>();
+
+    /**
+     * 是否检测json文件
+     */
+    private boolean mIsCheckJson = false;
 
 
     public MoviePresenter(IMovieFilesContract.IView view) {
@@ -51,11 +62,15 @@ public class MoviePresenter extends BaseMvpPresenter<IMovieFilesContract.IView>
 
         mMovieList = new ArrayList<>();
 //        mRootPath="/mnt/sda/sda1/ftp2";
-        mRootPath = getSystemPropertie("sys.local.path");
+        mRootPath = SystemPropertyUtil.getSystemPropertie("persist.sys.local.path");
+//        Log.d(TAG, "-->>mRootPath=" + mRootPath);
         if (TextUtils.isEmpty(mRootPath)) {
-            mFileType = "/mnt/sda/sda1/ftp";
+            mRootPath = "/mnt/sda/sda1/ftp";
         }
-        if (mRootPath.substring(mRootPath.length() - 1).equals("/")) {
+
+        int lastLen = mRootPath.length() - 1;
+        Log.d(TAG, "-->>lastLen=" + lastLen);
+        if (mRootPath.substring(lastLen).equals("/")) {
             mRootPath = mRootPath.substring(0, mRootPath.length() - 1);
         }
 //        Log.d(TAG, "-->>mRootPath=" + mRootPath);
@@ -68,27 +83,52 @@ public class MoviePresenter extends BaseMvpPresenter<IMovieFilesContract.IView>
 
     @Override
     public void loadLocalFile() {
+        mMovieList.clear();
         //加载本地文件
         File file = new File(mRootPath);
+        if (file == null) {
+            getView().showNoList();
+            return;
+        }
         File[] tempList = file.listFiles();
         MovieInfo movieInfo;
+        if (tempList == null || tempList.length == 0) {
+            getView().showNoList();
+            return;
+        }
         for (int i = 0; i < tempList.length; i++) {
             if (!tempList[i].isFile()) {
-                String jsonFile = getMovieInfoFromFiles(mRootPath, tempList[i].getName());
-                if (TextUtils.isEmpty(jsonFile)) {
-                    continue;
+                if (mIsCheckJson) {
+                    String jsonFile = getJsonFromFiles(mRootPath, tempList[i].getName());
+                    if (TextUtils.isEmpty(jsonFile)) {
+                        continue;
+                    }
+                    movieInfo = new Gson().fromJson(jsonFile, MovieInfo.class);
+                    if (movieInfo == null) {
+                        continue;
+                    }
+                    String posterPath = getNewFilePath(
+                            mRootPath, tempList[i].getName(), movieInfo.getPosterName());
+                    String moviePath = getPosterPath(
+                            mRootPath, tempList[i].getName(), movieInfo.getFileName());
+                    movieInfo.setPosterName(posterPath);
+                    movieInfo.setFileName(moviePath);
+                } else {
+                    String movieName = getFilePathByExtionsion(
+                            mRootPath, tempList[i].getName(), "ts");
+                    Log.i(TAG, "-->>movieName=" + movieName);
+                    if (TextUtils.isEmpty(movieName)) {
+                        Log.e(TAG, "moviePath is empty");
+                        continue;
+                    }
+                    String posterPath = getPosterPath(
+                            mRootPath, tempList[i].getName(), movieName);
+                    movieInfo = new MovieInfo();
+                    movieInfo.setFileName(mRootPath + "/" + tempList[i].getName() + "/" + movieName);
+                    movieInfo.setPosterName(posterPath);
+//                    Log.d(TAG, "-->name=" + movieInfo.getFileName());
+//                    Log.d(TAG, "-->poster=" + movieInfo.getPosterName());
                 }
-//                Log.i(TAG, "-->>jsonFile=" +jsonFile);
-                movieInfo = new Gson().fromJson(jsonFile, MovieInfo.class);
-                if (movieInfo == null) {
-                    continue;
-                }
-                String posterPath = getNewFilePath(
-                        mRootPath, tempList[i].getName(), movieInfo.getPosterName());
-                String moviePath = getNewFilePath(
-                        mRootPath, tempList[i].getName(), movieInfo.getFileName());
-                movieInfo.setPosterName(posterPath);
-                movieInfo.setFileName(moviePath);
                 mMovieList.add(movieInfo);
             }
         }
@@ -101,6 +141,10 @@ public class MoviePresenter extends BaseMvpPresenter<IMovieFilesContract.IView>
 //            mMovieList.add(movieInfo);
 //        }
 
+        if (mMovieList.isEmpty()) {
+            getView().showNoList();
+            return;
+        }
         getView().updataMovieList(mMovieList);
     }
 
@@ -130,19 +174,87 @@ public class MoviePresenter extends BaseMvpPresenter<IMovieFilesContract.IView>
      * @param folderName 文件夹名
      * @return
      */
-    private String getMovieInfoFromFiles(String rootPath, String folderName) {
+    private String getJsonFromFiles(String rootPath, String folderName) {
         String fileName = rootPath + "/" + folderName;
         File movieFile = new File(fileName);
         File[] files = movieFile.listFiles();
         for (int i = 0; i < files.length; i++) {
-            if (files[i].isFile()){
+            if (files[i].isFile()) {
                 String extension = getExtensionName(files[i].getName());
-                Log.d(TAG, "-->>extension="+extension);
-                if (files[i].isFile() && "json".equals(extension)) {
+                Log.d(TAG, "-->>extension=" + extension);
+                if ("json".equals(extension)) {
                     //找到了json文件
-                    Log.d(TAG, "-->>name="+files[i].getName());
+//                    Log.d(TAG, "-->>name=" + files[i].getName());
                     String json = readString(fileName, files[i].getName());
                     return json;
+//                Log.i(TAG, "-->>json=" + json);
+                }
+            }
+
+        }
+        return null;
+    }
+
+    /**
+     * 通过扩展名获取文件路径
+     *
+     * @param rootPath   根路径
+     * @param folderName 文件夹名
+     * @param ext        扩展名
+     * @return
+     */
+    private String getFilePathByExtionsion(String rootPath, String folderName, String ext) {
+        String fileName = rootPath + "/" + folderName;
+        File movieFile = new File(fileName);
+        File[] files = movieFile.listFiles();
+        if (files == null || files.length == 0) {
+            Log.i(TAG, "-->>getFilePathByExtionsion files is empty");
+            return null;
+        }
+        for (int i = 0; i < files.length; i++) {
+            if (files[i].isFile()) {
+                String extension = getExtensionName(files[i].getName());
+//                Log.d(TAG, "-->>extension=" + extension);
+                if (ext.equals(extension)) {
+                    String path = files[i].getName();
+//                    Log.i(TAG, "-->>path=" + path);
+                    return path;
+                }
+            }
+
+        }
+        return null;
+    }
+
+    /**
+     * 获取海报路径
+     *
+     * @param rootPath
+     * @param folderName
+     * @param movieName
+     * @return
+     */
+    private String getPosterPath(String rootPath, String folderName, String movieName) {
+        String fileName = rootPath + "/" + folderName;
+        File movieFile = new File(fileName);
+        File[] files = movieFile.listFiles();
+        if (files == null || files.length == 0) {
+            Log.e(TAG, "getPosterPath files is empty");
+            return null;
+        }
+        if (TextUtils.isEmpty(movieName) || movieName.length() < 3) {
+            Log.e(TAG, "getPosterPath movieName is empty");
+            return null;
+        }
+        movieName = movieName.substring(0, movieName.length() - 3);
+        for (int i = 0; i < files.length; i++) {
+            if (files[i].isFile()) {
+                String extension = getExtensionName(files[i].getName());
+                if (files[i].getName().contains(movieName) &&
+                        ("jpg".equals(extension) || "png".equals(extension))) {
+                    String path = fileName + "/" + files[i].getName();
+                    Log.i(TAG, "-->>path=" + path);
+                    return path;
 //                Log.i(TAG, "-->>json=" + json);
                 }
             }
@@ -251,27 +363,10 @@ public class MoviePresenter extends BaseMvpPresenter<IMovieFilesContract.IView>
         return mimeType;
     }
 
-    private String getSystemPropertie(String key) {
-        String value = "";
-        try {
-            Method method = Class.forName("android.os.SystemProperties").getMethod("get", String.class, String.class);
-            value = ((String) method.invoke(null, key, "")).toString();
-            // 对部分非法数据进行处理
-            if (value == null || value.equalsIgnoreCase("unknown")) {
-                value = "";
-            } else {
-                value = value.trim();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return value;
-    }
-
     /**
      * 获取扩展名
      *
-     * @param fileName
+     * @param fileName 文件路径
      * @return
      */
     private String getExtensionName(String fileName) {

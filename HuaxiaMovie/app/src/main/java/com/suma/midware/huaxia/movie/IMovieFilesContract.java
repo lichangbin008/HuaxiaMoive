@@ -29,6 +29,11 @@ public interface IMovieFilesContract {
          * @param type 类型
          */
         void startPlay(Uri uri, String type);
+
+        /**
+         * 显示无列表
+         */
+        void showNoList();
     }
 
     /**
@@ -65,6 +70,11 @@ public interface IMovieFilesContract {
 
         @Override
         public void startPlay(Uri uri, String type) {
+
+        }
+
+        @Override
+        public void showNoList() {
 
         }
 
